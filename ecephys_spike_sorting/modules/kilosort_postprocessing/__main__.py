@@ -22,7 +22,7 @@ def run_postprocessing(args):
     start = time.time()
     
        
-    spike_times, spike_clusters, spike_templates, amplitudes, templates, channel_map, \
+    spike_times, spike_clusters, spike_templates, detection_templates, amplitudes, templates, channel_map, \
     channel_pos, clusterIDs, cluster_quality, cluster_amplitude, pc_features, pc_feature_ind, \
     template_features, spike_positions = \
                 load_kilosort_data(args['directories']['kilosort_output_directory'], \
@@ -40,15 +40,16 @@ def run_postprocessing(args):
                                         args['ks_postprocessing_params']['cWaves_path'])
         
     if args['ks_postprocessing_params']['remove_duplicates']:
-        spike_times, spike_clusters, spike_templates, amplitudes, pc_features, \
+        spike_times, spike_clusters, spike_templates, detection_templates, amplitudes, pc_features, \
         template_features, spike_positions, overlap_matrix, overlap_summary = \
             remove_double_counted_spikes(spike_times, 
                                          spike_clusters,
                                          spike_templates, 
+                                         detection_templates,
                                          amplitudes, 
                                          channel_map,
                                          channel_pos,
-                                         templates, 
+                                         templates,                                      
                                          pc_features, 
                                          pc_feature_ind, 
                                          template_features,
@@ -73,6 +74,8 @@ def run_postprocessing(args):
         np.save(os.path.join(output_dir, 'template_features.npy'), template_features)
     if spike_positions.size > 0:
         np.save(os.path.join(output_dir, 'spike_positions.npy'), spike_positions )
+    if detection_templates.size > 0:
+        np.save(os.path.join(output_dir, 'spike_detection_templates.npy'), detection_templates )
         
     
     if args['ks_postprocessing_params']['remove_duplicates']:

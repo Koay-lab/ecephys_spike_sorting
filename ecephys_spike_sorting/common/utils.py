@@ -336,6 +336,11 @@ def load_kilosort_data(folder,
         spike_positions = load(folder, 'spike_positions.npy') 
     else:
         spike_positions =  np.asarray([])
+    if os.path.isfile(os.path.join(folder, 'spike_detection_templates.npy')):
+        print('loading spike_detection_templates')
+        detection_templates = load(folder, 'spike_detection_templates.npy') 
+    else:
+        detection_templates =  np.asarray([])
 
     # fix any nans in templates
     if np.sum(np.isnan(templates)):
@@ -381,7 +386,7 @@ def load_kilosort_data(folder,
         cluster_amplitude = np.append(cluster_amplitude,pad)
         
 
-    return spike_times, spike_clusters, spike_templates, amplitudes, unwhitened_temps, \
+    return spike_times, spike_clusters, spike_templates, detection_templates, amplitudes, unwhitened_temps, \
        channel_map, channel_pos, cluster_ids, cluster_quality, cluster_amplitude, \
        pc_features, pc_feature_ind, template_features, spike_positions
 

@@ -6,7 +6,7 @@ from ...common.schemas import EphysParams, Directories, CommonFiles
 class ks4_params(DefaultSchema):    
     Th_universal = Float(required=False, default=9, help='threshold for creating templates')
     Th_learned = Float(required=False, default=8, help='threshold for creating templates')
-    Th_single_ch = Float(required=False, default=8, help='threshold crossings for pre-clustering (in PCA projection space)')
+    Th_single_ch = Float(required=False, default=6, help='threshold crossings for pre-clustering (in PCA projection space)')
     duplicate_spike_ms = Float(required=False, default=0.25, help='Number of bins for which subsequent spikes from the same cluster are assumed to be artifacts. A value of 0 disables this step.')
     nblocks = Int(required=False, default=5, help='number of blocks used to segment the probe when tracking drift, 0 == do not track, 1 == rigid, > 1 == non-rigid')
     sig_interp = Float(required=True, default=20.0, help='sigma for the Gaussian interpolation in drift correction um)')
@@ -20,8 +20,8 @@ class ks4_params(DefaultSchema):
     nearest_templates = Int(required=False, default=100, help='Number of nearest spike template locations to consider when finding local maxima during spike detection.')
     ccg_threshold = Float(required=False, default=0.25, help='Fraction of refractory period violations that are allowed in the CCG compared to baseline; used to perform splits and merges. ')
     acg_threshold = Float(required=False, default=0.20, help='Fraction of refractory period violations that are allowed in the ACG compared to baseline; used to assign "good" units. ') 
+    cluster_init_seed = Int(required=False, default=5, help='start seed for clustering')
     template_seed = Int(required=False, default=0, help='seed to pick which batches are used for finding universal templates')
-    cluster_seed = Int(required=False, default=0, help='start seed for clustering')
     
 class KS4HelperParameters(DefaultSchema):
     do_CAR = Bool(required=False, default=True, help='set to True to perform common average referencing (median subtraction)')
@@ -32,6 +32,7 @@ class KS4HelperParameters(DefaultSchema):
     fproc = String(required=False, default='D:\kilosort_datatemp\temp_wh.dat', help='Processed data file on a fast ssd')
     fshigh = Float(required=False, allow_none=True, default=300, help='high pass filter frequency')
     fslow = Float(required=False, allow_none=True, default=10000, help='low pass filter frequency')
+    ks4_det = Bool(required=False, default=False, help='set to True to set torch to deterministic mode')
     ks4_params = Nested(ks4_params, required=True, help='Parameters used to auto-generate a Kilosort config file')
 
 

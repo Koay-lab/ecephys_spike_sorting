@@ -13,6 +13,36 @@ from kilosort.parameters import DEFAULT_SETTINGS
 from ...common.SGLXMetaToCoords import readMeta, MetaToCoords
 
 from pathlib import Path
+import torch
+import random
+
+
+
+def set_seed(seed=42, deterministic = False):
+    # Python random module
+    random.seed(seed)
+    # Numpy
+    np.random.seed(seed)
+    # PyTorch CPU and GPU
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)  # For multi-GPU
+    
+    if deterministic: 
+        # CuDNN settings
+        torch.backends.cudnn.deterministic = True  # Uses deterministic convolution algorithms
+        torch.backends.cudnn.benchmark = False     # Disables auto-tuner for optimal performance
+        
+        # Force deterministic algorithms
+        torch.use_deterministic_algorithms(True)
+        
+        # Recommended for reproducibility in CUDA
+        os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+        
+        # Set OMP_NUM_THREADS
+        os.environ["OMP_NUM_THREADS"] = str(1)
+
+
 
 def _string_as_list_param(dict, param, default_val):
     v = dict.get(param, default_val)
@@ -35,14 +65,18 @@ def _get_ks_params(meta_file, settings_from_json, b_seed):
     settings = DEFAULT_SETTINGS    
     settings['n_chan_bin'] = int(probe_meta.get('nSavedChans'))
     settings['fs'] = float(probe_meta.get('imSampRate')) # sample rate
+    
     # all other user setting coming from the json
     settings = {**settings, **settings_from_json}
     if settings['tmax'] < 0:
         settings['tmax'] = np.inf
+        
+        
     if not(b_seed):
-        # remove seed settings from ks4 settings
+        # remove template seed setting from ks4 settings
+        # cluster_init_seed now set thruogh normal settings
         settings.pop('template_seed')
-        settings.pop('cluster_seed')
+        
 
     return dict(settings)
 
@@ -198,6 +232,9 @@ def run_ks4(args):
     settings = _get_ks_params(meta_file, settings_from_json, b_seed = False)
     print(repr(settings))
 #    print(repr(ks4_prb))
+  
+    set_seed( seed = args['ks4_helper_params']['ks4_params']['cluster_init_seed'],\
+              deterministic = args['ks4_helper_params']['ks4_det'])
     
     run_kilosort(settings, 
                  probe=ks4_prb, 
@@ -206,9 +243,10 @@ def run_ks4(args):
                  data_dtype='int16', 
                  do_CAR=args['ks4_helper_params']['do_CAR'], 
                  save_extra_vars=args['ks4_helper_params']['save_extra_vars'],
-                 clear_cache=True,
+                 clear_cache=False,
                  save_preprocessed_copy=args['ks4_helper_params']['save_preprocessed_copy'],
-                 verbose_console=True)
+                 verbose_console=True
+                 )
 #
     # make sure the params file for phy has the correct number of channels
     # to match the input binary. This is likely not necessary for KS4.

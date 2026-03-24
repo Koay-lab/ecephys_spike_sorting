@@ -60,14 +60,16 @@ def createInputJson(output_file,
                     ks_minfr_goodchannels = 0.1,                  
                     ks_whiteningRadius_um = 163,
                     ks_Th = '[10,4]',
-                    ks_CSBseed = 1,
+                    ks_CSBseed = 5,
                     ks_LTseed = 1,
+                    ks_template_from_data = True,
                     ks_templateRadius_um = 163,
                     ks_nblocks = 5,
                     ks_CAR = 0,
                     ks_output_tag = 'ks4',
                     ks_tmin = 0,
                     ks_tmax = -1,
+                    ks4_det = False,
                     c_Waves_snr_um = 160,
                     c_Waves_calc_half = False,
                     wm_spread_thresh = 0.12,
@@ -79,8 +81,13 @@ def createInputJson(output_file,
                     ks4_min_template_size_um = 10
                     ):
 
+    # set CUBLAS for deterministic torch
+    if sys.platform == 'win32':
+        os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8" 
+        print(f"CUBLAS_WORKSPACE_CONFIG is set to: {os.environ.get('CUBLAS_WORKSPACE_CONFIG')}")
+    
     # hard coded paths to code on your computer and system
-    ecephys_directory = r'C:\Users\colonellj\Documents\ecephys_spike_sorting\ecephys_spike_sorting'
+    ecephys_directory = r'C:\Users\labadmin\Documents\ecephys_spike_sorting\ecephys_spike_sorting'
     
     # location of kilosort respositories for MATLAB versions.
     # determins what will be run by the kilosort_helper module
@@ -94,10 +101,10 @@ def createInputJson(output_file,
     else:
         kilosort_repository = r''  # default path for when we aren't using any of these
             
-    npy_matlab_repository = r'C:\Users\colonellj\Documents\npy-matlab-master'
-    catGTPath = r'C:\Users\colonellj\Documents\CatGT-win'
-    tPrime_path=r'C:\Users\colonellj\Documents\TPrime-win'
-    cWaves_path=r'C:\Users\colonellj\Documents\C_Waves-win'
+    npy_matlab_repository = r'C:\Users\labadmin\Documents\npy-matlab'
+    catGTPath = r'C:\Users\labadmin\Documents\CatGT-win'
+    tPrime_path=r'C:\Users\labadmin\Documents\TPrime-win'
+    cWaves_path=r'C:\Users\labadmin\Documents\C_Waves-win'
          
     # for config files and kilosort working space
     kilosort_output_tmp = r'D:\kilosort_datatemp' 
@@ -343,6 +350,7 @@ def createInputJson(output_file,
             'doFilter' : ks_doFilter,        # not yet used
             'ks_make_copy': ks_make_copy,
             'save_preprocessed_copy' : bool(ks_copy_fproc),
+            'ks4_det' : ks4_det,
             # ks4_params are limited to members of the KS4 'settings' list
             'ks4_params' : {           
                     'Th_universal' : ks4_Th_universal,
@@ -353,13 +361,13 @@ def createInputJson(output_file,
                     'whitening_range' : ks_whiteningRange,
                     'min_template_size' : ks4_min_template_size_um,
                     'template_sizes' : 5,
-                    'templates_from_data' : True,
+                    'templates_from_data' : ks_template_from_data,
                     'nearest_chans' : 10,
                     'nearest_templates' : 100,
                     'ccg_threshold' : 0.25,
                     'acg_threshold' : 0.20,
                     'template_seed' : ks_LTseed,
-                    'cluster_seed' : ks_CSBseed,
+                    'cluster_init_seed' : ks_CSBseed,
                     'tmin' : ks_tmin,
                     'tmax' : ks_tmax
             }

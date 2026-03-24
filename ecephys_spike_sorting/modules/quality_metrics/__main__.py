@@ -37,7 +37,7 @@ def calculate_quality_metrics(args):
 
     try:
         
-        spike_times, spike_clusters, spike_templates, amplitudes, templates, channel_map, \
+        spike_times, spike_clusters, spike_templates, detection_templates, amplitudes, templates, channel_map, \
         channel_pos, clusterIDs, cluster_quality, cluster_amplitude, pc_features, \
         pc_feature_ind, template_features, channel_positions = \
                 load_kilosort_data(args['directories']['kilosort_output_directory'], \

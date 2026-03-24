@@ -17,9 +17,16 @@ from create_input_json import createInputJson
 # User input -- Edit this section
 # -------------------------------
 # -------------------------------
-# Full path to log file, including file name
-# If this file exists, new run data is appended to it
-logFullPath = r'D:\SC048_out\pipeline_log.csv'
+# Paths for output
+# These include the sorting output, log files, and the json files of parameters
+kilosort_output_parent =  r'D:\SC048_out\new_out'
+logFullPath = os.path.join(kilosort_output_parent, 'pipeline_log.txt')
+json_directory = os.path.join(kilosort_output_parent, 'json_files')
+if not os.path.isdir(kilosort_output_parent):
+    os.mkdir(kilosort_output_parent)
+if not os.path.isdir(json_directory):
+    os.mkdir(json_directory)
+
 
 # ks_ver  sets up the output tag and threshold values.
 # To run a specific MATLAB KS, make sure to set up the kilosort_repository in 
@@ -65,7 +72,7 @@ else:
 
 recording_specs = [		
     
-                [r'D:\SC048_out\catgt_SC048_122920_ex_g0\SC048_122920_ex_g0_imec2\SC048_122920_ex_g0_tcat.imec2.ap.bin',['cortex']]
+                [r'D:\SC048_out\catgt_SC048_122920_ex_g0\SC048_122920_ex_g0_imec0\SC048_122920_ex_g0_tcat.imec0.ap.bin',['cortex']]
 
 ]
 
@@ -123,7 +130,6 @@ modules = [
             'quality_metrics'
 			]
 
-json_directory = r'D:\SC048_out\json_files'
 
 
 # -----------------------
@@ -155,7 +161,7 @@ session_id = []
 data_directory = []
 output_dir = []
 
-kilosort_output_parent = r'D:\SC048_out\filelist_output'
+
  
 for i, spec in enumerate(recording_specs):
     
