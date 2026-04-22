@@ -167,7 +167,7 @@ def remove_double_counted_spikes(spike_times, spike_clusters, spike_templates, d
     new_order = np.argsort(overlap_summary[:,0])
     overlap_summary = overlap_summary[new_order,:]
 
-    return spike_times, spike_clusters, detection_templates, spike_templates, amplitudes, pc_features, \
+    return spike_times, spike_clusters, spike_templates, detection_templates, amplitudes, pc_features, \
             template_features, spike_positions, overlap_matrix, overlap_summary
 
                 
