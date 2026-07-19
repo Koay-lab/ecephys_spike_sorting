@@ -1,4 +1,3 @@
-
 import os, io, json, sys
 
 if sys.platform == 'linux':
@@ -18,7 +17,7 @@ def create_samba_directory(samba_server, samba_share):
 
     return data_dir
 
-def createInputJson(output_file, 
+def createInputJson(output_file,
                     npx_directory=None, 
                     continuous_file = None,
                     spikeGLX_data=True,
@@ -71,7 +70,7 @@ def createInputJson(output_file,
                     ks_tmax = -1,
                     ks4_det = False,
                     c_Waves_snr_um = 160,
-                    c_Waves_calc_half = False,
+                    c_Waves_calc_half = True,
                     wm_spread_thresh = 0.12,
                     wm_site_range = 16,
                     qm_isi_thresh = 1.5/1000,
@@ -87,8 +86,10 @@ def createInputJson(output_file,
         print(f"CUBLAS_WORKSPACE_CONFIG is set to: {os.environ.get('CUBLAS_WORKSPACE_CONFIG')}")
     
     # hard coded paths to code on your computer and system
-    ecephys_directory = r'C:\Users\labadmin\Documents\ecephys_spike_sorting\ecephys_spike_sorting'
-    
+    # SAK: Assume packages are siblings of the ecephys_spike_sorting directory
+    ecephys_directory = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    software_dir = os.path.dirname(ecephys_directory)
+
     # location of kilosort respositories for MATLAB versions.
     # determins what will be run by the kilosort_helper module
     # These ONLY need to be defined if you are going to call them.
@@ -102,12 +103,12 @@ def createInputJson(output_file,
         kilosort_repository = r''  # default path for when we aren't using any of these
             
     npy_matlab_repository = r'C:\Users\labadmin\Documents\npy-matlab'
-    catGTPath = r'C:\Users\labadmin\Documents\CatGT-win'
-    tPrime_path=r'C:\Users\labadmin\Documents\TPrime-win'
-    cWaves_path=r'C:\Users\labadmin\Documents\C_Waves-win'
+    catGTPath = os.path.join(software_dir, 'CatGT-win')
+    tPrime_path=os.path.join(software_dir, 'TPrime-win')
+    cWaves_path=os.path.join(software_dir, 'C_Waves-win')
          
     # for config files and kilosort working space
-    kilosort_output_tmp = r'D:\kilosort_datatemp' 
+    kilosort_output_tmp = os.path.join(software_dir, 'kilosort_output_tmp')
     
     
     # KS 3.0 and 4 do not calculation pc features for phy
