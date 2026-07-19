@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 
+from datetime import date
 from helpers import SpikeGLX_utils
 from helpers import log_from_json
 from helpers import run_one_probe
@@ -67,7 +68,8 @@ software_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(_
 
 # Raw data directory = npx_directory
 # run_specs = name, gate, trigger and probes to process
-npx_directory = os.path.join(software_dir, 'jETPAK_data')
+# npx_directory = os.path.join(software_dir, 'jETPAK_data')
+npx_directory = r"Z:\jETPAK\Implant_Mice\2_Pit\Pit_07-15-2026\Pit_TetheredData_Pre-Post_07152026"
 
 # Auxiliary channel notes:
 # For ni only:
@@ -105,7 +107,7 @@ run_specs = [
 # Set to an existing directory; all output will be written here.
 # Output will be in the standard SpikeGLX directory structure:
 # run_folder/probe_folder/*.bin
-catGT_dest = os.path.join(software_dir, 'output')
+catGT_dest = os.path.join(software_dir, 'output', str(date.today()))
 json_directory = os.path.join(catGT_dest, 'ecephys_json')
 
 os.makedirs(json_directory, exist_ok=True)
